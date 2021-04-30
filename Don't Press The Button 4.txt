@@ -1,0 +1,245 @@
+local library = loadstring(game:HttpGet(("https://pastebin.com/raw/FsJak6AT")))() -- It's obfuscated, I won't let you see my ugly coding skills. =)
+
+local w = library:CreateWindow("Don't Press The Button 4")
+
+local b = w:CreateFolder("Functions")
+
+b:Label("~Functions~", Color3.fromRGB(38, 38, 38), Color3.fromRGB(0, 216, 111))
+
+b:Toggle(
+    "Auto Press Button",
+    function(bool)
+        AutoPress = bool
+    end
+)
+
+b:Toggle(
+    "Bring Coins",
+    function(bool)
+        BringCoins = bool
+    end
+)
+
+spawn(
+    function()
+        while wait() do
+            if AutoPress then
+                fireclickdetector(game:GetService("Workspace").ButtonPresser.Button.ClickDetector)
+            end
+        end
+    end
+)
+
+spawn(
+    function()
+        while wait() do
+            if BringCoins then
+                for i, v in pairs(game:GetService("Workspace").Coin:GetDescendants()) do
+                    if v.Name == "Coin" then
+                        v.CFrame = game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame
+                    end
+                end
+            end
+        end
+    end
+)
+
+local x = w:CreateFolder("Player")
+
+x:Slider(
+    "Speed",
+    10,
+    300,
+    true,
+    function(value)
+        while true do
+            game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = value --Walkspeed of your choice
+            game.Players.LocalPlayer.PlayerScripts.Events.Player.Stamina.Stamina.Value = 1000
+            wait()
+        end
+    end
+)
+
+x:Slider(
+    "jump",
+    10,
+    300,
+    true,
+    function(value)
+        game.Players.LocalPlayer.Character.Humanoid.JumpPower = value
+    end
+)
+x:Button(
+    "Crl + Click = TP",
+    function()
+        local b = game:GetService("Players").LocalPlayer
+        local Mouse = b:GetMouse()
+
+        Mouse.Button1Down:connect(
+            function()
+                if not game:GetService("UserInputService"):IsKeyDown(Enum.KeyCode.LeftControl) then
+                    return
+                end
+                if not Mouse.Target then
+                    return
+                end
+                b.Character:MoveTo(Mouse.Hit.p)
+            end
+        )
+    end
+)
+
+x:Button(
+    "No Clip (Press N)",
+    function()
+        noclip = false
+        game:GetService("RunService").Stepped:connect(
+            function()
+                if noclip then
+                    game.Players.LocalPlayer.Character.Humanoid:ChangeState(11)
+                end
+            end
+        )
+        local b = game.Players.LocalPlayer
+        local mouse = b:GetMouse()
+        mouse.KeyDown:connect(
+            function(key)
+                if key == "n" then
+                    noclip = not noclip
+                    game.Players.LocalPlayer.Character.Humanoid:ChangeState(11)
+                end
+            end
+        )
+    end
+)
+
+x:Button(
+    "Fly (Press E)",
+    function()
+        loadstring(game:HttpGet("https://pastebin.com/raw/7rXZ9VNc", true))()
+    end
+)
+
+x:Button(
+    "Inf Jump",
+    function()
+        game:GetService("UserInputService").JumpRequest:connect(
+            function()
+                game.Players.LocalPlayer.Character:FindFirstChildOfClass("Humanoid"):ChangeState("Jumping")
+            end
+        )
+    end
+)
+x:Button(
+    "Btools",
+    function()
+        game.StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.Backpack, true)
+        for index, child in pairs(game:GetService("Workspace"):GetChildren()) do
+            if child.ClassName == "Part" then
+                child.Locked = false
+            end
+            if child.ClassName == "MeshPart" then
+                child.Locked = false
+            end
+            if child.ClassName == "UnionOperation" then
+                child.Locked = false
+            end
+            if child.ClassName == "Model" then
+                for index, chil in pairs(child:GetChildren()) do
+                    if chil.ClassName == "Part" then
+                        chil.Locked = false
+                    end
+                    if chil.ClassName == "MeshPart" then
+                        chil.Locked = false
+                    end
+                    if chil.ClassName == "UnionOperation" then
+                        chil.Locked = false
+                    end
+                    if chil.ClassName == "Model" then
+                        for index, childe in pairs(chil:GetChildren()) do
+                            if childe.ClassName == "Part" then
+                                childe.Locked = false
+                            end
+                            if childe.ClassName == "MeshPart" then
+                                childe.Locked = false
+                            end
+                            if childe.ClassName == "UnionOperation" then
+                                childe.Locked = false
+                            end
+                            if childe.ClassName == "Model" then
+                                for index, childeo in pairs(childe:GetChildren()) do
+                                    if childeo.ClassName == "Part" then
+                                        childeo.Locked = false
+                                    end
+                                    if childeo.ClassName == "MeshPart" then
+                                        childeo.Locked = false
+                                    end
+                                    if childeo.ClassName == "UnionOperation" then
+                                        childeo.Locked = false
+                                    end
+                                    if childeo.ClassName == "Model" then
+                                    end
+                                end
+                            end
+                        end
+                    end
+                end
+            end
+        end
+        c = Instance.new("HopperBin", game:GetService("Players").LocalPlayer.Backpack)
+        c.BinType = Enum.BinType.Hammer
+        c = Instance.new("HopperBin", game:GetService("Players").LocalPlayer.Backpack)
+        c.BinType = Enum.BinType.Clone
+        c = Instance.new("HopperBin", game:GetService("Players").LocalPlayer.Backpack)
+        c.BinType = Enum.BinType.Grab
+    end
+)
+
+x:Button(
+    "Light It Up",
+    function()
+        local s = Instance.new("PointLight", game.Players.LocalPlayer.Character.Head)
+        s.Brightness = 0.3
+        s.Range = 100
+        game.Lighting.Changed:connect(
+            function()
+                game.Lighting.TimeOfDay = "14:00:00"
+                game.Lighting.FogEnd = 300
+                game.Lighting.Brightness = 10
+                game.Lighting.ColorCorrection.Brightness = 0.1
+                game.Lighting.ColorCorrection.Saturation = 0.1
+                game.Lighting.Bloom.Intensity = 0.1
+            end
+        )
+    end
+)
+
+local MISC = w:CreateFolder("Misc")
+
+MISC:Button(
+    "Rejoin",
+    function()
+        local TeleportService = game:GetService("TeleportService")
+        local PlaceId = game.PlaceId
+        local player = game.Players.LocalPlayer
+        if player then
+            TeleportService:Teleport(PlaceId, player)
+        end
+    end
+)
+
+MISC:GuiSettings()
+
+local CS = w:CreateFolder("Credits")
+
+CS:Label("Made By: Bebo Mods", Color3.fromRGB(38, 38, 38), Color3.fromRGB(0, 216, 111))
+CS:Label("Discord Bebo Mods#1532", Color3.fromRGB(38, 38, 38), Color3.fromRGB(0, 216, 111))
+CS:Label("YouTube Channel Bebo Mods", Color3.fromRGB(38, 38, 38), Color3.fromRGB(0, 216, 111))
+CS:Label("Thanks For Using My Scripts", Color3.fromRGB(38, 38, 38), Color3.fromRGB(0, 216, 111))
+CS:Button(
+    "Discord Server Link",
+    function()
+        setclipboard("https://discord.gg/mTC5yP5ay8")
+    end
+)
+CS:DestroyGUI()
