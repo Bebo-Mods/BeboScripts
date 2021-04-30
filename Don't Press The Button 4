@@ -34,9 +34,13 @@ spawn(
     function()
         while wait() do
             if BringCoins then
-                for i, v in pairs(game:GetService("Workspace").Coin:GetDescendants()) do
-                    if v.Name == "Coin" then
-                        v.CFrame = game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame
+                local children = game.Workspace.Coin:GetChildren()
+                for _, child in pairs(children) do
+                    for _, child in pairs(child:GetChildren()) do
+                        table.insert(children, child)
+                    end
+                    if child:IsA("BasePart") and child.Name == "Coin" then
+                        child.CFrame = game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame
                     end
                 end
             end
