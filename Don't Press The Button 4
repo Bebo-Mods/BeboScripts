@@ -30,23 +30,6 @@ spawn(
     end
 )
 
-spawn(
-    function()
-        while wait() do
-            if BringCoins then
-                local children = game.Workspace.Coin:GetChildren()
-                for _, child in pairs(children) do
-                    for _, child in pairs(child:GetChildren()) do
-                        table.insert(children, child)
-                    end
-                    if child:IsA("BasePart") and child.Name == "Coin" then
-                        child.CFrame = game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame
-                    end
-                end
-            end
-        end
-    end
-)
 
 local x = w:CreateFolder("Player")
 
