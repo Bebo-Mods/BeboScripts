@@ -71,11 +71,8 @@ Button.MouseButton1Click:Connect(
                 wait(0.25)
                 debounce = false
                 toggled = false
-                for i, v in pairs(game.Players.LocalPlayer.Character:GetDescendants()) do
-                    if v.Name == "Root" then
-                        v.Enabled = true
-                    end
-                end
+
+                game.Players.LocalPlayer.Character.Humanoid.Health = 0
             elseif toggled == false then
                 debounce = true
                 game:GetService("TweenService"):Create(
@@ -92,8 +89,8 @@ Button.MouseButton1Click:Connect(
                 debounce = false
                 toggled = true
                 for i, v in pairs(game.Players.LocalPlayer.Character:GetDescendants()) do
-                    if v.Name == "Root" then
-                        v.Enabled = false
+                    if v.Name == "Root" or v.Name == "RootJoint" then
+                        v:Destroy()
                     end
                 end
             end
