@@ -1,7 +1,9 @@
--- Gui to Lua
--- Version: 3.2
-
--- Instances:
+for i, v in pairs(game.CoreGui:GetChildren()) do
+    if v:FindFirstChild("UI") then
+        v:Destroy()
+    end
+end
+wait(1)
 
 local UI = Instance.new("ScreenGui")
 local Main = Instance.new("ImageLabel")
@@ -50,40 +52,54 @@ Button.TextColor3 = Color3.fromRGB(0, 0, 0)
 Button.TextSize = 14.000
 Button.TextTransparency = 1.000
 
-
-local toggled = false 
+local toggled = false
 local debounce = false
 
-Button.MouseButton1Click:Connect(function() 
-	if debounce == false then
-		if toggled == true then 
-			debounce = true
-			game:GetService("TweenService"):Create(Toggle, TweenInfo.new(0.25), {ImageColor3 = Color3.fromRGB(200, 200, 200)}):Play()
-			game:GetService("TweenService"):Create(Circle, TweenInfo.new(0.25), {Position = UDim2.new(0,2,0,2)}):Play()
-			wait(0.25)
-			debounce = false
-			toggled = false
-			for i,v in pairs(game.Players.LocalPlayer.Character:GetDescendants()) do 
-				if v.Name == "Root" then
-					v.Enabled = true
-				end
-			end
-		elseif toggled == false then 
-			debounce = true
-			game:GetService("TweenService"):Create(Toggle, TweenInfo.new(0.25), {ImageColor3 = Color3.fromRGB(64, 200, 114)}):Play()
-			game:GetService("TweenService"):Create(Circle, TweenInfo.new(0.25), {Position = UDim2.new(1,-20,0,2)}):Play()
-			wait(0.25)
-			debounce = false
-			toggled = true
-			for i,v in pairs(game.Players.LocalPlayer.Character:GetDescendants()) do 
-				if v.Name == "Root" then
-					v.Enabled = false
-				end
-			end
-		end
-	end
-end)
+Button.MouseButton1Click:Connect(
+    function()
+        if debounce == false then
+            if toggled == true then
+                debounce = true
+                game:GetService("TweenService"):Create(
+                    Toggle,
+                    TweenInfo.new(0.25),
+                    {ImageColor3 = Color3.fromRGB(200, 200, 200)}
+                ):Play()
+                game:GetService("TweenService"):Create(Circle, TweenInfo.new(0.25), {Position = UDim2.new(0, 2, 0, 2)}):Play(
 
+                )
+                wait(0.25)
+                debounce = false
+                toggled = false
+                for i, v in pairs(game.Players.LocalPlayer.Character:GetDescendants()) do
+                    if v.Name == "Root" then
+                        v.Enabled = true
+                    end
+                end
+            elseif toggled == false then
+                debounce = true
+                game:GetService("TweenService"):Create(
+                    Toggle,
+                    TweenInfo.new(0.25),
+                    {ImageColor3 = Color3.fromRGB(64, 200, 114)}
+                ):Play()
+                game:GetService("TweenService"):Create(
+                    Circle,
+                    TweenInfo.new(0.25),
+                    {Position = UDim2.new(1, -20, 0, 2)}
+                ):Play()
+                wait(0.25)
+                debounce = false
+                toggled = true
+                for i, v in pairs(game.Players.LocalPlayer.Character:GetDescendants()) do
+                    if v.Name == "Root" then
+                        v.Enabled = false
+                    end
+                end
+            end
+        end
+    end
+)
 
 Circle.Name = "Circle"
 Circle.Parent = Toggle
@@ -130,9 +146,8 @@ Credits.TextWrapped = true
 
 -- Scripts:
 
-
 local UserInputService = game:GetService("UserInputService")
-local runService = (game:GetService("RunService"));
+local runService = (game:GetService("RunService"))
 
 local gui = Main
 
@@ -142,45 +157,65 @@ local dragStart
 local startPos
 
 function Lerp(a, b, m)
-	return a + (b - a) * m
-end;
+    return a + (b - a) * m
+end
 
 local lastMousePos
 local lastGoalPos
-local DRAG_SPEED = (8); -- // The speed of the UI darg.
+local DRAG_SPEED = (8) -- // The speed of the UI darg.
 function Update(dt)
-	if not (startPos) then return end;
-	if not (dragging) and (lastGoalPos) then
-		gui.Position = UDim2.new(startPos.X.Scale, Lerp(gui.Position.X.Offset, lastGoalPos.X.Offset, dt * DRAG_SPEED), startPos.Y.Scale, Lerp(gui.Position.Y.Offset, lastGoalPos.Y.Offset, dt * DRAG_SPEED))
-		return 
-	end;
+    if not (startPos) then
+        return
+    end
+    if not (dragging) and (lastGoalPos) then
+        gui.Position =
+            UDim2.new(
+            startPos.X.Scale,
+            Lerp(gui.Position.X.Offset, lastGoalPos.X.Offset, dt * DRAG_SPEED),
+            startPos.Y.Scale,
+            Lerp(gui.Position.Y.Offset, lastGoalPos.Y.Offset, dt * DRAG_SPEED)
+        )
+        return
+    end
 
-	local delta = (lastMousePos - UserInputService:GetMouseLocation())
-	local xGoal = (startPos.X.Offset - delta.X);
-	local yGoal = (startPos.Y.Offset - delta.Y);
-	lastGoalPos = UDim2.new(startPos.X.Scale, xGoal, startPos.Y.Scale, yGoal)
-	gui.Position = UDim2.new(startPos.X.Scale, Lerp(gui.Position.X.Offset, xGoal, dt * DRAG_SPEED), startPos.Y.Scale, Lerp(gui.Position.Y.Offset, yGoal, dt * DRAG_SPEED))
-end;
+    local delta = (lastMousePos - UserInputService:GetMouseLocation())
+    local xGoal = (startPos.X.Offset - delta.X)
+    local yGoal = (startPos.Y.Offset - delta.Y)
+    lastGoalPos = UDim2.new(startPos.X.Scale, xGoal, startPos.Y.Scale, yGoal)
+    gui.Position =
+        UDim2.new(
+        startPos.X.Scale,
+        Lerp(gui.Position.X.Offset, xGoal, dt * DRAG_SPEED),
+        startPos.Y.Scale,
+        Lerp(gui.Position.Y.Offset, yGoal, dt * DRAG_SPEED)
+    )
+end
 
-gui.InputBegan:Connect(function(input)
-	if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-		dragging = true
-		dragStart = input.Position
-		startPos = gui.Position
-		lastMousePos = UserInputService:GetMouseLocation()
+gui.InputBegan:Connect(
+    function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+            dragging = true
+            dragStart = input.Position
+            startPos = gui.Position
+            lastMousePos = UserInputService:GetMouseLocation()
 
-		input.Changed:Connect(function()
-			if input.UserInputState == Enum.UserInputState.End then
-				dragging = false
-			end
-		end)
-	end
-end)
+            input.Changed:Connect(
+                function()
+                    if input.UserInputState == Enum.UserInputState.End then
+                        dragging = false
+                    end
+                end
+            )
+        end
+    end
+)
 
-gui.InputChanged:Connect(function(input)
-	if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
-		dragInput = input
-	end
-end)
+gui.InputChanged:Connect(
+    function(input)
+        if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
+            dragInput = input
+        end
+    end
+)
 
 runService.Heartbeat:Connect(Update)
