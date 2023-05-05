@@ -45,6 +45,8 @@ player.CharacterAdded:Connect(
         bAngularVelocity:Clone().Parent = v:WaitForChild("HumanoidRootPart", 9e99)
     end
 )
+local vim = game:service "VirtualInputManager"
+
 local library = loadstring(game:HttpGet("https://raw.githubusercontent.com/bloodball/-back-ups-for-libs/main/turtle"))()
 local OwO = library:Window("Blox Fruits")
 OwO:Label("Made By: Bebo Mods", Color3.fromRGB(127, 143, 166))
@@ -65,7 +67,8 @@ spawn(
                         function()
                             Noclip()
                             HitBox()
-			    game:GetService("VirtualUser"):ClickButton1(Vector2.new(9e9, 9e9))
+                            game:GetService("VirtualUser"):ClickButton1(Vector2.new(9e9, 9e9))
+                            vim:SendKeyEvent(true, "Z", false, game)
                             for i, v in pairs(game:GetService("Workspace").Enemies:GetChildren()) do
                                 if
                                     v:FindFirstChild("HumanoidRootPart") and v:FindFirstChild("Humanoid").Health > 0 and
@@ -110,4 +113,30 @@ spawn(
         )
     end
 )
+local Places = {}
 
+for i, v in pairs(game:GetService("Workspace")._WorldOrigin.Locations:GetChildren()) do
+    table.insert(Places, v.Name)
+end
+
+local dropdown =
+    OwO:Dropdown(
+    "Select Location",
+    Places,
+    function(PlaceName)
+        for i, v in pairs(game:GetService("Workspace")._WorldOrigin.Locations:GetChildren()) do
+            if v.Name == PlaceName then
+                tween =
+                    game:GetService("TweenService"):Create(
+                    game.Players.LocalPlayer.Character.HumanoidRootPart,
+                    TweenInfo.new(game.Players.LocalPlayer:DistanceFromCharacter(v.Position) / 150),
+                    {
+                        CFrame = CFrame.new(v.Position + Vector3.new(0, 30, 0), v.Position)
+                    }
+                )
+
+                tween:Play()
+            end
+        end
+    end
+)
