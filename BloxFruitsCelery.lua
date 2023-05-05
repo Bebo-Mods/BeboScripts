@@ -65,6 +65,7 @@ spawn(
                         function()
                             Noclip()
                             HitBox()
+							game:GetService("VirtualUser"):ClickButton1(Vector2.new(9e9, 9e9))
                             for i, v in pairs(game:GetService("Workspace").Enemies:GetChildren()) do
                                 if
                                     v:FindFirstChild("HumanoidRootPart") and v:FindFirstChild("Humanoid").Health > 0 and
