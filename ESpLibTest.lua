@@ -41,6 +41,9 @@ local function createPlayerESP(player, options)
     textLabel.Font = options.Font or 2
     textLabel.Color = options.Color or Color3.fromRGB(255, 255, 255)
     textLabel.Size = options.Size or 13
+    textLabel.Center = options.Center or false -- New Center option
+
+    local partToShowOn = options.PartToShowOn or humanoidRootPart -- New Part option
 
     local ancestryChangedConnection
     local healthChangedConnection
@@ -61,8 +64,8 @@ local function createPlayerESP(player, options)
     end)
 
     renderSteppedConnection = runService.RenderStepped:Connect(function()
-        local hrpPosition, hrpOnScreen = camera:WorldToViewportPoint(humanoidRootPart.Position)
-        if hrpOnScreen then
+        local partPosition, partOnScreen = camera:WorldToViewportPoint(partToShowOn.Position)
+        if partOnScreen then
             local textToShow = ""
             if options.ShowName then
                 textToShow = player.Name
@@ -71,10 +74,10 @@ local function createPlayerESP(player, options)
                 textToShow = textToShow .. (textToShow ~= "" and "\n" or "") .. string.format("Health: %d", humanoid.Health)
             end
             if options.ShowDistance then
-                local distance = math.floor((humanoidRootPart.Position - camera.CFrame.Position).Magnitude + 0.5)
+                local distance = math.floor((partToShowOn.Position - camera.CFrame.Position).Magnitude + 0.5)
                 textToShow = textToShow .. (textToShow ~= "" and "\n" or "") .. string.format("Distance: %d studs", distance)
             end
-            textLabel.Position = Vector2.new(hrpPosition.X, hrpPosition.Y)
+            textLabel.Position = Vector2.new(partPosition.X, partPosition.Y)
             textLabel.Text = textToShow
             textLabel.Visible = espEnabled
         else
