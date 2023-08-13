@@ -11,11 +11,12 @@ local playerESPInfo = {}
 
 local function createPlayerESP(player, options)
     local function disconnectPlayerESP(player)
-        local connections, textLabel = playerESPInfo[player]
+        local connections = playerESPInfo[player]
         if connections then
             for _, conn in pairs(connections) do
                 conn:Disconnect()
             end
+            local textLabel = connections.TextLabel
             if textLabel then
                 textLabel:Remove()
             end
@@ -100,15 +101,7 @@ function ESPLibrary.AddESP(player, enabled, options)
     else
         local espInfo = playerESPInfo[player]
         if espInfo then
-            local connections = espInfo
-            for _, conn in pairs(connections) do
-                conn:Disconnect()
-            end
-            local textLabel = connections.TextLabel
-            if textLabel then
-                textLabel:Remove()
-            end
-            playerESPInfo[player] = nil
+            disconnectPlayerESP(player)
         end
     end
 end
@@ -119,16 +112,7 @@ function ESPLibrary.ToggleESP(espEnabledState)
         if espEnabled then
             createPlayerESP(player, espInfo.Options)
         else
-            for _, conn in pairs(espInfo) do
-                if type(conn) == "userdata" and conn.Disconnect then
-                    conn:Disconnect()
-                end
-            end
-            local textLabel = espInfo.TextLabel
-            if textLabel then
-                textLabel:Remove()
-            end
-            playerESPInfo[player] = nil
+            disconnectPlayerESP(player)
         end
     end
 end
