@@ -41,9 +41,9 @@ local function createPlayerESP(player, options)
     textLabel.Font = options.Font or 2
     textLabel.Color = options.Color or Color3.fromRGB(255, 255, 255)
     textLabel.Size = options.Size or 13
-    textLabel.Center = options.Center or false -- New Center option
+    textLabel.Center = options.Center or false
 
-    local partToShowOn = options.PartToShowOn or humanoidRootPart -- New Part option
+    local partToShowOn = options.PartToShowOn or humanoidRootPart
 
     local ancestryChangedConnection
     local healthChangedConnection
@@ -120,7 +120,9 @@ function ESPLibrary.ToggleESP(espEnabledState)
             createPlayerESP(player, espInfo.Options)
         else
             for _, conn in pairs(espInfo) do
-                conn:Disconnect()
+                if type(conn) == "userdata" and conn.Disconnect then
+                    conn:Disconnect()
+                end
             end
             local textLabel = espInfo.TextLabel
             if textLabel then
