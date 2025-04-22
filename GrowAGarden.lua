@@ -18,6 +18,7 @@ local sellInterval = 0
 local sellWhenFull = false
 local sellBasedOnSlider = false
 local autoSell = false
+local autoBuyRobuxSeeds = false
 
 -- Please give credits if you gonna skid this
 
@@ -35,6 +36,10 @@ autoSection:Toggle("Auto Walk To Plant", function(v) autoWalkToPlant = v end)
 
 -- Seed Buying Section
 local seedSection = mainTab:Section("Seed Buying")
+
+seedSection:Toggle("Auto Buy/Dupe Robux Seeds", function(v)
+	autoBuyRobuxSeeds = v
+end)
 
 seedSection:Toggle("Auto Buy All Seeds", function(v)
 	autoBuyAllSeeds = v
@@ -203,11 +208,11 @@ local function autoBuySeedsFunction()
 					if stock and stock > 0 then
 						-- Auto-buy all seeds
 						if autoBuyAllSeeds then
-							ReplicatedStorage:WaitForChild("BuySeedStock"):FireServer(item.Name)
+							ReplicatedStorage:FindFirstChild("BuySeedStock"):FireServer(item.Name)
 						end
 						-- Auto-buy selected seed
 						if autoBuySpecificSeed and selectedSeedName == item.Name then
-							ReplicatedStorage:WaitForChild("BuySeedStock"):FireServer(item.Name)
+							ReplicatedStorage:FindFirstChild("BuySeedStock"):FireServer(item.Name)
 						end
 					end
 				end
@@ -257,6 +262,17 @@ task.spawn(function()
 				end
 				remote:FireServer(pos, seedType)
 			end
+		end
+	end
+end)
+
+-- Auto Buy Robux Seeds
+task.spawn(function()
+	while task.wait(5) do
+		if autoBuyRobuxSeeds then
+			for i = 1, 5 do
+                ReplicatedStorage.EasterShopService:FireServer("PurchaseSeed", i)
+            end
 		end
 	end
 end)
