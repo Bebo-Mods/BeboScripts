@@ -1,15 +1,15 @@
 local Players = game:GetService("Players")
 local player = Players.LocalPlayer
 local playerGui = player:WaitForChild("PlayerGui")
--- DeepSeek made this lol
--- Create the main UI
+
+-- Create the main UI (now taller to accommodate the new button)
 local screenGui = Instance.new("ScreenGui")
 screenGui.Name = "KeyManager"
 screenGui.Parent = playerGui
 
 local frame = Instance.new("Frame")
-frame.Size = UDim2.new(0, 200, 0, 120)
-frame.Position = UDim2.new(0.5, -100, 0.5, -60)
+frame.Size = UDim2.new(0, 200, 0, 160) -- Increased height for new button
+frame.Position = UDim2.new(0.5, -100, 0.5, -80) -- Adjusted position
 frame.AnchorPoint = Vector2.new(0.5, 0.5)
 frame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
 frame.Parent = screenGui
@@ -48,7 +48,7 @@ closeButton.Parent = titleBar
 local getKeyButton = Instance.new("TextButton")
 getKeyButton.Name = "GetKeyButton"
 getKeyButton.Size = UDim2.new(0.9, 0, 0, 35)
-getKeyButton.Position = UDim2.new(0.05, 0, 0.3, 0)
+getKeyButton.Position = UDim2.new(0.05, 0, 0.25, 0) -- Adjusted position
 getKeyButton.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
 getKeyButton.TextColor3 = Color3.fromRGB(255, 255, 255)
 getKeyButton.Text = "Get Key"
@@ -56,11 +56,23 @@ getKeyButton.Font = Enum.Font.Gotham
 getKeyButton.TextSize = 14
 getKeyButton.Parent = frame
 
+-- New Discord Button
+local discordButton = Instance.new("TextButton")
+discordButton.Name = "DiscordButton"
+discordButton.Size = UDim2.new(0.9, 0, 0, 35)
+discordButton.Position = UDim2.new(0.05, 0, 0.5, 0) -- Middle position
+discordButton.BackgroundColor3 = Color3.fromRGB(88, 101, 242) -- Discord brand color
+discordButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+discordButton.Text = "Copy Discord"
+discordButton.Font = Enum.Font.Gotham
+discordButton.TextSize = 14
+discordButton.Parent = frame
+
 -- Check Button
 local checkButton = Instance.new("TextButton")
 checkButton.Name = "CheckButton"
 checkButton.Size = UDim2.new(0.9, 0, 0, 35)
-checkButton.Position = UDim2.new(0.05, 0, 0.65, 0)
+checkButton.Position = UDim2.new(0.05, 0, 0.75, 0) -- Adjusted position
 checkButton.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
 checkButton.TextColor3 = Color3.fromRGB(255, 255, 255)
 checkButton.Text = "Check/Execute"
@@ -128,7 +140,6 @@ local function sendNotification(text, color)
     task.wait(0.3)
     notification:Destroy()
 end
-sendNotification("Get Key and complete all the checkpoints first or you will get kicked", Color3.fromRGB(150, 50, 50))
 
 -- Button functionality
 getKeyButton.MouseButton1Click:Connect(function()
@@ -137,6 +148,18 @@ getKeyButton.MouseButton1Click:Connect(function()
     if setclipboard then
         setclipboard(keyUrl)
         sendNotification("Key URL copied to clipboard!", Color3.fromRGB(50, 150, 50))
+    else
+        sendNotification("Clipboard function not available", Color3.fromRGB(150, 50, 50))
+    end
+end)
+
+-- New Discord button functionality
+discordButton.MouseButton1Click:Connect(function()
+    local discordLink = "https://discord.com/invite/eHZ5FjUxpX" -- Replace with your actual Discord link
+    
+    if setclipboard then
+        setclipboard(discordLink)
+        sendNotification("Discord link copied!", Color3.fromRGB(88, 101, 242)) -- Discord color
     else
         sendNotification("Clipboard function not available", Color3.fromRGB(150, 50, 50))
     end
