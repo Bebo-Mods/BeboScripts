@@ -118,18 +118,17 @@ task.spawn(function()
 					if prompt:IsA("ProximityPrompt") then
 						local playerRoot = player.Character and player.Character:FindFirstChild("HumanoidRootPart")
 						if playerRoot then
-							local dist = (playerRoot.Position - prompt.Parent.Position).Magnitude
+							local dist = (playerRoot.Position - prompt.Parent.Parent.PrimaryPart.Position).Magnitude
 							if dist <= 20 then
 								prompt.Exclusivity = Enum.ProximityPromptExclusivity.AlwaysShow
 								prompt.MaxActivationDistance = 100
 								prompt.RequiresLineOfSight = false
-								prompt.Enabled = true
-								fireproximityprompt(prompt, 1, true)
+								fireproximityprompt(prompt)
 							elseif autoWalkToPlant then
 								local humanoid = player.Character and player.Character:FindFirstChild("Humanoid")
 								if humanoid then
                                     humanoid.Jump = true
-									humanoid:MoveTo(prompt.Parent.Position + Vector3.new(0, 5, 0))
+									humanoid:MoveTo(prompt.Parent.Parent.PrimaryPart.Position + Vector3.new(0, 5, 0))
 								end
 							end
 						end
