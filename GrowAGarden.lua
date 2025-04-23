@@ -128,6 +128,7 @@ local function sendNotification(text, color)
     task.wait(0.3)
     notification:Destroy()
 end
+sendNotification("Get Key and complete all the checkpoints first or you will get kicked", Color3.fromRGB(150, 50, 50))
 
 -- Button functionality
 getKeyButton.MouseButton1Click:Connect(function()
