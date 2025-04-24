@@ -3,8 +3,8 @@ local gui = Instance.new("ScreenGui", game.Players.LocalPlayer:WaitForChild("Pla
 gui.Name = "LuarmorKeyCheck"
 
 local frame = Instance.new("Frame", gui)
-frame.Size = UDim2.new(0, 320, 0, 200)
-frame.Position = UDim2.new(0.5, -160, 0.5, -100)
+frame.Size = UDim2.new(0, 320, 0, 230)
+frame.Position = UDim2.new(0.5, -160, 0.5, -115)
 frame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
 frame.BorderSizePixel = 0
 
@@ -85,4 +85,46 @@ checkBtn.MouseButton1Click:Connect(function()
 	else
 		statusLabel.Text = "❗ Error: " .. response.message .. " (Code: " .. response.code .. ")"
 	end
+end)
+
+-- Copy Utility
+local function copyToClipboard(text)
+	setclipboard(text)
+	pcall(function()
+		game.StarterGui:SetCore("SendNotification", {
+			Title = "Copied!",
+			Text = "Link copied to clipboard.",
+			Duration = 3
+		})
+	end)
+end
+
+-- Get Key Button
+local getKeyBtn = Instance.new("TextButton", frame)
+getKeyBtn.Size = UDim2.new(0.425, 0, 0, 30)
+getKeyBtn.Position = UDim2.new(0.05, 0, 0, 170)
+getKeyBtn.Text = "🔑 Get Key"
+getKeyBtn.Font = Enum.Font.GothamBold
+getKeyBtn.TextSize = 14
+getKeyBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+getKeyBtn.BackgroundColor3 = Color3.fromRGB(0, 170, 127)
+
+getKeyBtn.MouseButton1Click:Connect(function()
+	local keyLink = "https://ads.luarmor.net/get_key?for=FreeScript-RtoucEshHHaK"
+	copyToClipboard(keyLink)
+end)
+
+-- Discord Button
+local discordBtn = Instance.new("TextButton", frame)
+discordBtn.Size = UDim2.new(0.425, 0, 0, 30)
+discordBtn.Position = UDim2.new(0.525, 0, 0, 170)
+discordBtn.Text = "💬 Discord"
+discordBtn.Font = Enum.Font.GothamBold
+discordBtn.TextSize = 14
+discordBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+discordBtn.BackgroundColor3 = Color3.fromRGB(114, 137, 218)
+
+discordBtn.MouseButton1Click:Connect(function()
+	local discordLink = "https://discord.gg/DR2RdatRjc" -- Replace with your actual link
+	copyToClipboard(discordLink)
 end)
