@@ -1,195 +1,88 @@
-local Players = game:GetService("Players")
-local player = Players.LocalPlayer
-local playerGui = player:WaitForChild("PlayerGui")
+-- GUI Setup
+local gui = Instance.new("ScreenGui", game.Players.LocalPlayer:WaitForChild("PlayerGui"))
+gui.Name = "LuarmorKeyCheck"
 
--- Create the main UI (now taller to accommodate the new button)
-local screenGui = Instance.new("ScreenGui")
-screenGui.Name = "KeyManager"
-screenGui.Parent = playerGui
-
-local frame = Instance.new("Frame")
-frame.Size = UDim2.new(0, 200, 0, 160) -- Increased height for new button
-frame.Position = UDim2.new(0.5, -100, 0.5, -80) -- Adjusted position
-frame.AnchorPoint = Vector2.new(0.5, 0.5)
+local frame = Instance.new("Frame", gui)
+frame.Size = UDim2.new(0, 320, 0, 200)
+frame.Position = UDim2.new(0.5, -160, 0.5, -100)
 frame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
-frame.Parent = screenGui
+frame.BorderSizePixel = 0
 
--- Title bar with proper dragging implementation
-local titleBar = Instance.new("Frame")
-titleBar.Size = UDim2.new(1, 0, 0, 25)
-titleBar.Position = UDim2.new(0, 0, 0, 0)
-titleBar.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-titleBar.Active = true
-titleBar.Selectable = true
-titleBar.Parent = frame
-
-local title = Instance.new("TextLabel")
-title.Size = UDim2.new(1, -25, 1, 0)
-title.Position = UDim2.new(0, 0, 0, 0)
-title.BackgroundTransparency = 1
+local title = Instance.new("TextLabel", frame)
+title.Size = UDim2.new(1, 0, 0, 30)
+title.Text = "Luarmor Key Checker"
 title.TextColor3 = Color3.fromRGB(255, 255, 255)
-title.Text = "Key Manager"
+title.BackgroundTransparency = 1
 title.Font = Enum.Font.GothamBold
-title.TextSize = 14
-title.Parent = titleBar
+title.TextSize = 18
 
--- Close button
-local closeButton = Instance.new("TextButton")
-closeButton.Size = UDim2.new(0, 25, 0, 25)
-closeButton.Position = UDim2.new(1, -25, 0, 0)
-closeButton.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
-closeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-closeButton.Text = "X"
-closeButton.Font = Enum.Font.GothamBold
-closeButton.TextSize = 14
-closeButton.Parent = titleBar
+local keyBox = Instance.new("TextBox", frame)
+keyBox.Size = UDim2.new(0.9, 0, 0, 30)
+keyBox.Position = UDim2.new(0.05, 0, 0, 50)
+keyBox.PlaceholderText = "Paste your key here"
+keyBox.Font = Enum.Font.Gotham
+keyBox.TextSize = 16
+keyBox.TextColor3 = Color3.fromRGB(255, 255, 255)
+keyBox.BackgroundColor3 = Color3.fromRGB(55, 55, 55)
 
--- Get Key Button
-local getKeyButton = Instance.new("TextButton")
-getKeyButton.Name = "GetKeyButton"
-getKeyButton.Size = UDim2.new(0.9, 0, 0, 35)
-getKeyButton.Position = UDim2.new(0.05, 0, 0.25, 0) -- Adjusted position
-getKeyButton.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
-getKeyButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-getKeyButton.Text = "Get Key"
-getKeyButton.Font = Enum.Font.Gotham
-getKeyButton.TextSize = 14
-getKeyButton.Parent = frame
+local checkBtn = Instance.new("TextButton", frame)
+checkBtn.Size = UDim2.new(0.9, 0, 0, 30)
+checkBtn.Position = UDim2.new(0.05, 0, 0, 90)
+checkBtn.Text = "Check Key"
+checkBtn.Font = Enum.Font.GothamBold
+checkBtn.TextSize = 16
+checkBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+checkBtn.BackgroundColor3 = Color3.fromRGB(0, 170, 255)
 
--- New Discord Button
-local discordButton = Instance.new("TextButton")
-discordButton.Name = "DiscordButton"
-discordButton.Size = UDim2.new(0.9, 0, 0, 35)
-discordButton.Position = UDim2.new(0.05, 0, 0.5, 0) -- Middle position
-discordButton.BackgroundColor3 = Color3.fromRGB(88, 101, 242) -- Discord brand color
-discordButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-discordButton.Text = "Copy Discord"
-discordButton.Font = Enum.Font.Gotham
-discordButton.TextSize = 14
-discordButton.Parent = frame
+local statusLabel = Instance.new("TextLabel", frame)
+statusLabel.Size = UDim2.new(0.9, 0, 0, 30)
+statusLabel.Position = UDim2.new(0.05, 0, 0, 130)
+statusLabel.BackgroundTransparency = 1
+statusLabel.Text = "Status: Waiting..."
+statusLabel.Font = Enum.Font.Gotham
+statusLabel.TextSize = 14
+statusLabel.TextColor3 = Color3.fromRGB(200, 200, 200)
+statusLabel.TextWrapped = true
 
--- Check Button
-local checkButton = Instance.new("TextButton")
-checkButton.Name = "CheckButton"
-checkButton.Size = UDim2.new(0.9, 0, 0, 35)
-checkButton.Position = UDim2.new(0.05, 0, 0.75, 0) -- Adjusted position
-checkButton.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
-checkButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-checkButton.Text = "Check/Execute"
-checkButton.Font = Enum.Font.Gotham
-checkButton.TextSize = 14
-checkButton.Parent = frame
+-- Luarmor Key Check Logic
+local api = loadstring(game:HttpGet("https://sdkapi-public.luarmor.net/library.lua"))()
+api.script_id = "43488db9f41e67de2d625415e2aa5566" -- Your Script ID
 
--- Custom dragging implementation
-local dragging
-local dragInput
-local dragStart
-local startPos
+checkBtn.MouseButton1Click:Connect(function()
+	local userKey = keyBox.Text
+	if not userKey or #userKey < 32 then
+		statusLabel.Text = "❌ Key is too short or empty."
+		return
+	end
 
-local function update(input)
-    local delta = input.Position - dragStart
-    frame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
-end
+	local success, response = pcall(function()
+		return api.check_key(userKey)
+	end)
 
-titleBar.InputBegan:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-        dragging = true
-        dragStart = input.Position
-        startPos = frame.Position
-        
-        input.Changed:Connect(function()
-            if input.UserInputState == Enum.UserInputState.End then
-                dragging = false
-            end
-        end)
-    end
-end)
+	if not success then
+		statusLabel.Text = "⚠️ Error checking key."
+		return
+	end
 
-titleBar.InputChanged:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
-        dragInput = input
-    end
-end)
+	if response.code == "KEY_VALID" then
+		statusLabel.Text = "✅ Valid! Seconds left: " .. (response.data.auth_expire - os.time())
+		getgenv().script_key = userKey
+		wait(1)
+		api.load_script()
 
-game:GetService("UserInputService").InputChanged:Connect(function(input)
-    if input == dragInput and dragging then
-        update(input)
-    end
-end)
+	elseif response.code == "KEY_HWID_LOCKED" then
+		statusLabel.Text = "🔒 Key is locked to another HWID. Reset via bot."
 
--- Notification function
-local function sendNotification(text, color)
-    color = color or Color3.fromRGB(30, 30, 30)
-    
-    local notification = Instance.new("TextLabel")
-    notification.Size = UDim2.new(0, 200, 0, 40)
-    notification.Position = UDim2.new(0.5, -100, 0.1, 0)
-    notification.AnchorPoint = Vector2.new(0.5, 0)
-    notification.BackgroundColor3 = color
-    notification.TextColor3 = Color3.fromRGB(255, 255, 255)
-    notification.Text = text
-    notification.Font = Enum.Font.Gotham
-    notification.TextSize = 14
-    notification.ZIndex = 10
-    notification.Parent = screenGui
-    
-    -- Animate the notification
-    notification:TweenPosition(UDim2.new(0.5, -100, 0, 0), "Out", "Quad", 0.3, true)
-    task.wait(2)
-    notification:TweenPosition(UDim2.new(0.5, -100, 0.1, 0), "Out", "Quad", 0.3, true)
-    task.wait(0.3)
-    notification:Destroy()
-end
+	elseif response.code == "KEY_INCORRECT" then
+		statusLabel.Text = "❌ Key is incorrect or deleted."
 
--- Button functionality
-getKeyButton.MouseButton1Click:Connect(function()
-    local keyUrl = "https://ads.luarmor.net/get_key?for=FreeScript-RtoucEshHHaK"
-    
-    if setclipboard then
-        setclipboard(keyUrl)
-        sendNotification("Key URL copied to clipboard!", Color3.fromRGB(50, 150, 50))
-    else
-        sendNotification("Clipboard function not available", Color3.fromRGB(150, 50, 50))
-    end
-end)
+	elseif response.code == "KEY_EXPIRED" then
+		statusLabel.Text = "⌛ Key expired. Please get a new one."
 
--- New Discord button functionality
-discordButton.MouseButton1Click:Connect(function()
-    local discordLink = "https://discord.gg/DR2RdatRjc" -- Replace with your actual Discord link
-    
-    if setclipboard then
-        setclipboard(discordLink)
-        sendNotification("Discord link copied!", Color3.fromRGB(88, 101, 242)) -- Discord color
-    else
-        sendNotification("Clipboard function not available", Color3.fromRGB(150, 50, 50))
-    end
-end)
+	elseif response.code == "KEY_BANNED" then
+		statusLabel.Text = "🚫 Key has been blacklisted."
 
-checkButton.MouseButton1Click:Connect(function()
-    -- Check if the GUI exists in CoreGui
-    local targetGui = game:GetService("CoreGui"):FindFirstChild("LuxtLibGrow A Garden")
-    
-    if targetGui then
-        sendNotification("Script already loaded!", Color3.fromRGB(50, 150, 50))
-        screenGui:Destroy()
-    else
-        sendNotification("Loading script...", Color3.fromRGB(70, 70, 200))
-        
-        -- Load the script with error handling
-        local success, err = pcall(function()
-            loadstring(game:HttpGet("https://api.luarmor.net/files/v3/loaders/43488db9f41e67de2d625415e2aa5566.lua"))()
-        end)
-        
-        if success then
-            sendNotification("Script loaded successfully!", Color3.fromRGB(50, 150, 50))
-            screenGui:Destroy()
-        else
-            sendNotification("Load error: "..tostring(err), Color3.fromRGB(150, 50, 50))
-        end
-    end
-end)
-
--- Close button functionality
-closeButton.MouseButton1Click:Connect(function()
-    screenGui:Destroy()
+	else
+		statusLabel.Text = "❗ Error: " .. response.message .. " (Code: " .. response.code .. ")"
+	end
 end)
