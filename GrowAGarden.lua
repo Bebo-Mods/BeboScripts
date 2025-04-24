@@ -155,7 +155,7 @@ end)
 
 -- New Discord button functionality
 discordButton.MouseButton1Click:Connect(function()
-    local discordLink = "https://discord.com/invite/eHZ5FjUxpX" -- Replace with your actual Discord link
+    local discordLink = "https://discord.gg/DR2RdatRjc" -- Replace with your actual Discord link
     
     if setclipboard then
         setclipboard(discordLink)
