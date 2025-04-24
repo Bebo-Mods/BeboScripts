@@ -69,7 +69,8 @@ checkBtn.MouseButton1Click:Connect(function()
 		getgenv().script_key = userKey
 		wait(1)
 		api.load_script()
-
+        gui:Destroy()
+        
 	elseif response.code == "KEY_HWID_LOCKED" then
 		statusLabel.Text = "🔒 Key is locked to another HWID. Reset via bot."
 
