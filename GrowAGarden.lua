@@ -111,7 +111,7 @@ getKeyBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
 getKeyBtn.BackgroundColor3 = Color3.fromRGB(0, 170, 127)
 
 getKeyBtn.MouseButton1Click:Connect(function()
-	local keyLink = "https://ads.luarmor.net/get_key?for=FreeScript-RtoucEshHHaK"
+	local keyLink = "https://ads.luarmor.net/get_key?for=WorkinkSh-HXXYFxyjQCrF"
 	copyToClipboard(keyLink)
 end)
 
