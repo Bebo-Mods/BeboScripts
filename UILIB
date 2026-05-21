@@ -1,0 +1,336 @@
+-- SilentLib UI | https://github.com/
+-- loadstring(game:HttpGet("raw link here"))()
+
+local SilentLib = {}
+SilentLib.__index = SilentLib
+
+local TweenService = game:GetService("TweenService")
+local UIS = game:GetService("UserInputService")
+
+local ACCENT = Color3.fromRGB(212, 34, 255)
+local DARK = Color3.fromRGB(10, 10, 15)
+local DARK2 = Color3.fromRGB(15, 15, 25)
+local DARK3 = Color3.fromRGB(22, 22, 30)
+local DARK4 = Color3.fromRGB(30, 30, 40)
+local TEXT = Color3.fromRGB(200, 200, 220)
+local SUBTEXT = Color3.fromRGB(140, 140, 160)
+local WHITE = Color3.fromRGB(255, 255, 255)
+local OFF = Color3.fromRGB(50, 50, 60)
+
+local function tween(obj, props, t)
+    TweenService:Create(obj, TweenInfo.new(t or 0.15), props):Play()
+end
+
+local function corner(parent, radius)
+    local c = Instance.new("UICorner", parent)
+    c.CornerRadius = UDim.new(0, radius or 6)
+    return c
+end
+
+local function stroke(parent, color, thickness)
+    local s = Instance.new("UIStroke", parent)
+    s.Color = color or ACCENT
+    s.Thickness = thickness or 1.2
+    return s
+end
+
+local function label(parent, props)
+    local l = Instance.new("TextLabel", parent)
+    l.BackgroundTransparency = 1
+    l.Font = props.Font or Enum.Font.Gotham
+    l.TextSize = props.TextSize or 12
+    l.TextColor3 = props.TextColor3 or TEXT
+    l.Text = props.Text or ""
+    l.Size = props.Size or UDim2.new(1, 0, 1, 0)
+    l.Position = props.Position or UDim2.new(0, 0, 0, 0)
+    l.TextXAlignment = props.TextXAlignment or Enum.TextXAlignment.Left
+    if props.ZIndex then l.ZIndex = props.ZIndex end
+    return l
+end
+
+-- Window
+function SilentLib.new(title, size)
+    local self = setmetatable({}, SilentLib)
+    size = size or Vector2.new(220, 300)
+
+    local gui = Instance.new("ScreenGui")
+    gui.Name = "SilentLib"
+    gui.ResetOnSpawn = false
+    gui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+    gui.DisplayOrder = 9999
+    gui.IgnoreGuiInset = true
+    pcall(function() gui.Parent = gethui and gethui() or game:GetService("CoreGui") end)
+
+    local Main = Instance.new("Frame", gui)
+    Main.Size = UDim2.new(0, size.X, 0, size.Y)
+    Main.Position = UDim2.new(0.5, -size.X/2, 0.5, -size.Y/2)
+    Main.BackgroundColor3 = DARK
+    Main.BorderSizePixel = 0
+    Main.ClipsDescendants = true
+    corner(Main, 8)
+    stroke(Main, ACCENT, 1.2)
+
+    -- titlebar
+    local TitleBar = Instance.new("Frame", Main)
+    TitleBar.Size = UDim2.new(1, 0, 0, 32)
+    TitleBar.BackgroundColor3 = ACCENT
+    TitleBar.BorderSizePixel = 0
+    corner(TitleBar, 8)
+
+    -- fix bottom corners of titlebar
+    local TitleFix = Instance.new("Frame", TitleBar)
+    TitleFix.Size = UDim2.new(1, 0, 0.5, 0)
+    TitleFix.Position = UDim2.new(0, 0, 0.5, 0)
+    TitleFix.BackgroundColor3 = ACCENT
+    TitleFix.BorderSizePixel = 0
+
+    label(TitleBar, {
+        Text = title or "SilentLib",
+        Font = Enum.Font.GothamBold,
+        TextSize = 13,
+        TextColor3 = WHITE,
+        TextXAlignment = Enum.TextXAlignment.Center,
+    })
+
+    -- drag
+    local dragging, dragStart, startPos
+    TitleBar.InputBegan:Connect(function(i)
+        if i.UserInputType == Enum.UserInputType.MouseButton1 then
+            dragging = true
+            dragStart = i.Position
+            startPos = Main.Position
+        end
+    end)
+    UIS.InputChanged:Connect(function(i)
+        if dragging and i.UserInputType == Enum.UserInputType.MouseMovement then
+            local d = i.Position - dragStart
+            Main.Position = UDim2.new(
+                startPos.X.Scale, startPos.X.Offset + d.X,
+                startPos.Y.Scale, startPos.Y.Offset + d.Y
+            )
+        end
+    end)
+    UIS.InputEnded:Connect(function(i)
+        if i.UserInputType == Enum.UserInputType.MouseButton1 then dragging = false end
+    end)
+
+    -- scrolling content
+    local Content = Instance.new("ScrollingFrame", Main)
+    Content.Size = UDim2.new(1, 0, 1, -32)
+    Content.Position = UDim2.new(0, 0, 0, 32)
+    Content.BackgroundTransparency = 1
+    Content.BorderSizePixel = 0
+    Content.ScrollBarThickness = 2
+    Content.ScrollBarImageColor3 = ACCENT
+    Content.CanvasSize = UDim2.new(0, 0, 0, 0)
+    Content.AutomaticCanvasSize = Enum.AutomaticSize.Y
+
+    local Layout = Instance.new("UIListLayout", Content)
+    Layout.Padding = UDim.new(0, 6)
+    Layout.HorizontalAlignment = Enum.HorizontalAlignment.Center
+    Layout.SortOrder = Enum.SortOrder.LayoutOrder
+
+    local Pad = Instance.new("UIPadding", Content)
+    Pad.PaddingTop = UDim.new(0, 10)
+    Pad.PaddingBottom = UDim.new(0, 10)
+
+    self.gui = gui
+    self.main = Main
+    self.content = Content
+    return self
+end
+
+-- Section label
+function SilentLib:Section(text)
+    local lbl = Instance.new("TextLabel", self.content)
+    lbl.Size = UDim2.new(1, -20, 0, 18)
+    lbl.BackgroundTransparency = 1
+    lbl.Text = "● " .. text
+    lbl.TextColor3 = ACCENT
+    lbl.TextSize = 11
+    lbl.Font = Enum.Font.GothamBold
+    lbl.TextXAlignment = Enum.TextXAlignment.Left
+    return lbl
+end
+
+-- Toggle
+function SilentLib:Toggle(text, default, callback)
+    local val = default
+
+    local Row = Instance.new("Frame", self.content)
+    Row.Size = UDim2.new(1, -20, 0, 32)
+    Row.BackgroundColor3 = DARK3
+    Row.BorderSizePixel = 0
+    corner(Row)
+
+    label(Row, {
+        Text = text,
+        Size = UDim2.new(1, -50, 1, 0),
+        Position = UDim2.new(0, 10, 0, 0),
+    })
+
+    local ToggleBG = Instance.new("Frame", Row)
+    ToggleBG.Size = UDim2.new(0, 36, 0, 18)
+    ToggleBG.Position = UDim2.new(1, -46, 0.5, -9)
+    ToggleBG.BackgroundColor3 = val and ACCENT or OFF
+    ToggleBG.BorderSizePixel = 0
+    corner(ToggleBG, 99)
+
+    local Knob = Instance.new("Frame", ToggleBG)
+    Knob.Size = UDim2.new(0, 12, 0, 12)
+    Knob.Position = val and UDim2.new(1, -15, 0.5, -6) or UDim2.new(0, 3, 0.5, -6)
+    Knob.BackgroundColor3 = WHITE
+    Knob.BorderSizePixel = 0
+    corner(Knob, 99)
+
+    local Btn = Instance.new("TextButton", Row)
+    Btn.Size = UDim2.new(1, 0, 1, 0)
+    Btn.BackgroundTransparency = 1
+    Btn.Text = ""
+
+    Btn.MouseButton1Click:Connect(function()
+        val = not val
+        tween(ToggleBG, {BackgroundColor3 = val and ACCENT or OFF})
+        tween(Knob, {Position = val and UDim2.new(1, -15, 0.5, -6) or UDim2.new(0, 3, 0.5, -6)})
+        if callback then callback(val) end
+    end)
+
+    return Row
+end
+
+-- Textbox
+function SilentLib:Textbox(text, default, callback)
+    local Row = Instance.new("Frame", self.content)
+    Row.Size = UDim2.new(1, -20, 0, 52)
+    Row.BackgroundColor3 = DARK3
+    Row.BorderSizePixel = 0
+    corner(Row)
+
+    label(Row, {
+        Text = text,
+        TextColor3 = SUBTEXT,
+        TextSize = 11,
+        Size = UDim2.new(1, -10, 0, 22),
+        Position = UDim2.new(0, 10, 0, 0),
+    })
+
+    local Box = Instance.new("TextBox", Row)
+    Box.Size = UDim2.new(1, -20, 0, 22)
+    Box.Position = UDim2.new(0, 10, 0, 24)
+    Box.BackgroundColor3 = DARK4
+    Box.BorderSizePixel = 0
+    Box.Text = tostring(default)
+    Box.TextColor3 = TEXT
+    Box.TextSize = 12
+    Box.Font = Enum.Font.Gotham
+    Box.ClearTextOnFocus = false
+    corner(Box, 4)
+    local p = Instance.new("UIPadding", Box)
+    p.PaddingLeft = UDim.new(0, 6)
+
+    Box.FocusLost:Connect(function()
+        local n = tonumber(Box.Text)
+        if n then
+            if callback then callback(n) end
+        else
+            Box.Text = tostring(default)
+        end
+    end)
+
+    return Row
+end
+
+-- Dropdown
+function SilentLib:Dropdown(text, options, default, callback)
+    local selected = default
+    local open = false
+
+    local Wrapper = Instance.new("Frame", self.content)
+    Wrapper.Size = UDim2.new(1, -20, 0, 32)
+    Wrapper.BackgroundTransparency = 1
+    Wrapper.ClipsDescendants = false
+
+    local Header = Instance.new("Frame", Wrapper)
+    Header.Size = UDim2.new(1, 0, 0, 32)
+    Header.BackgroundColor3 = DARK3
+    Header.BorderSizePixel = 0
+    corner(Header)
+
+    local Lbl = label(Header, {
+        Text = text .. ":  " .. selected,
+        Size = UDim2.new(1, -30, 1, 0),
+        Position = UDim2.new(0, 10, 0, 0),
+    })
+
+    local Arrow = label(Header, {
+        Text = "▾",
+        TextColor3 = ACCENT,
+        TextSize = 14,
+        Font = Enum.Font.GothamBold,
+        Size = UDim2.new(0, 20, 1, 0),
+        Position = UDim2.new(1, -25, 0, 0),
+        TextXAlignment = Enum.TextXAlignment.Center,
+    })
+
+    local DropList = Instance.new("Frame", Wrapper)
+    DropList.Size = UDim2.new(1, 0, 0, #options * 28)
+    DropList.Position = UDim2.new(0, 0, 0, 34)
+    DropList.BackgroundColor3 = DARK2
+    DropList.BorderSizePixel = 0
+    DropList.Visible = false
+    DropList.ZIndex = 10
+    corner(DropList)
+    stroke(DropList, ACCENT, 1)
+
+    local DL = Instance.new("UIListLayout", DropList)
+    DL.SortOrder = Enum.SortOrder.LayoutOrder
+
+    for _, opt in ipairs(options) do
+        local Opt = Instance.new("TextButton", DropList)
+        Opt.Size = UDim2.new(1, 0, 0, 28)
+        Opt.BackgroundTransparency = 1
+        Opt.Text = opt
+        Opt.TextColor3 = opt == selected and ACCENT or TEXT
+        Opt.TextSize = 12
+        Opt.Font = Enum.Font.Gotham
+        Opt.ZIndex = 11
+
+        Opt.MouseButton1Click:Connect(function()
+            selected = opt
+            Lbl.Text = text .. ":  " .. selected
+            for _, c in ipairs(DropList:GetChildren()) do
+                if c:IsA("TextButton") then
+                    c.TextColor3 = c.Text == selected and ACCENT or TEXT
+                end
+            end
+            open = false
+            DropList.Visible = false
+            Arrow.Text = "▾"
+            Wrapper.Size = UDim2.new(1, -20, 0, 32)
+            if callback then callback(selected) end
+        end)
+    end
+
+    local HeaderBtn = Instance.new("TextButton", Header)
+    HeaderBtn.Size = UDim2.new(1, 0, 1, 0)
+    HeaderBtn.BackgroundTransparency = 1
+    HeaderBtn.Text = ""
+
+    HeaderBtn.MouseButton1Click:Connect(function()
+        open = not open
+        DropList.Visible = open
+        Arrow.Text = open and "▴" or "▾"
+        Wrapper.Size = open
+            and UDim2.new(1, -20, 0, 32 + 4 + #options * 28)
+            or UDim2.new(1, -20, 0, 32)
+    end)
+
+    return Wrapper
+end
+
+-- Destroy
+function SilentLib:Destroy()
+    self.gui:Destroy()
+end
+
+return SilentLib
